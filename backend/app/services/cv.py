@@ -23,7 +23,13 @@ def detect_objects(image_path: str, output_path: str):
         List of detections with confidence scores and bounding boxes
     """
     try:
-        results = model(image_path)
+        results = model(
+            image_path,
+            conf=0.25,   # confidence threshold
+            iou=0.45,    # IoU threshold for NMS
+            agnostic_nms=False,
+            max_det=1000
+        )
 
         print(results)
         # for r in results:

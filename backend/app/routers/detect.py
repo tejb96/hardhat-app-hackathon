@@ -1,4 +1,5 @@
-from fastapi import APIRouter, File, UploadFile, HTTPException
+from fastapi import APIRouter, File, UploadFile, HTTPException, BackgroundTasks
+from fastapi.responses import FileResponse
 from PIL import Image
 from io import BytesIO
 import tempfile
@@ -12,8 +13,18 @@ ALLOWED_EXTENSIONS = {".png", ".jpg", ".jpeg"}
 ALLOWED_FILESIZE = 10 * 1024 * 1024  # 10 MB
 
 
+def cleanup_files(file_paths: list):
+    """Background task to clean up temporary files"""
+    for file_path in file_paths:
+        if os.path.exists(file_path):
+            try:
+                os.remove(file_path)
+            except OSError:
+                pass
+
+
 @router.post("/detect")
-def detect(file: UploadFile = File(...)):
+def detect(file: UploadFile = File(...), background_tasks: BackgroundTasks = BackgroundTasks()):
     filename = file.filename
     # print(f"Received file: {filename}")
     extension = filename[filename.rfind("."):].lower()
@@ -50,26 +61,23 @@ def detect(file: UploadFile = File(...)):
         # Perform object detection
         detections = detect_objects(input_image_path, output_image_path)
 
-        # Read the processed image
-        with open(output_image_path, "rb") as processed_file:
-            processed_image_data = processed_file.read()
+        # Add cleanup task to background_tasks
+        background_tasks.add_task(cleanup_files, [input_image_path, output_image_path])
 
-        return {
-            "filename": filename,
-            "status": "File received and processed.",
-            "detections": detections,
-            "unique_id": unique_id
-        }
+        # Return the annotated image as a file response
+        return FileResponse(
+            path=output_image_path,
+            filename=f"annotated_{filename}",
+            media_type="image/png" if extension == ".png" else "image/jpeg"
+        )
 
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Detection failed: {str(e)}")
-
-    finally:
-        # Clean up temporary files
+        # Clean up on error
         for file_path in [input_image_path, output_image_path]:
             if os.path.exists(file_path):
                 try:
                     os.remove(file_path)
                 except OSError:
                     pass
+        raise HTTPException(status_code=500, detail=f"Detection failed: {str(e)}")
     
