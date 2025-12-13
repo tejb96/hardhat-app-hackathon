@@ -6,10 +6,11 @@ import tempfile
 import uuid
 import os
 from ..services.cv import detect_objects
+from ..services.report_generation import generate_pdf_report
 
 router = APIRouter()
 
-ALLOWED_EXTENSIONS = {".png", ".jpg", ".jpeg"}
+ALLOWED_EXTENSIONS = {".png", ".jpg", ".jpeg", ".webp"}
 ALLOWED_FILESIZE = 10 * 1024 * 1024  # 10 MB
 
 
@@ -61,14 +62,18 @@ def detect(file: UploadFile = File(...), background_tasks: BackgroundTasks = Bac
         # Perform object detection
         detections = detect_objects(input_image_path, output_image_path)
 
-        # Add cleanup task to background_tasks
-        background_tasks.add_task(cleanup_files, [input_image_path, output_image_path])
+        # Generate PDF report with original and annotated images
+        report_path = os.path.join(temp_dir, f"{unique_id}_report.pdf")
+        generate_pdf_report(input_image_path, output_image_path, report_path)
 
-        # Return the annotated image as a file response
+        # Add cleanup task to background_tasks
+        background_tasks.add_task(cleanup_files, [input_image_path, output_image_path, report_path])
+
+        # Return the PDF report
         return FileResponse(
-            path=output_image_path,
-            filename=f"annotated_{filename}",
-            media_type="image/png" if extension == ".png" else "image/jpeg"
+            path=report_path,
+            filename=f"safety_report_{unique_id}.pdf",
+            media_type="application/pdf"
         )
 
     except Exception as e:
