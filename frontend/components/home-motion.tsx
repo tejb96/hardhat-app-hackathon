@@ -79,7 +79,7 @@ export default function HomeMotion() {
             <CardContent className="p-6">
               <div className="aspect-square relative rounded-xl overflow-hidden bg-muted">
                 <Image
-                  src="/placeholder.png"
+                  src="/results.png"
                   alt="PPE detection preview"
                   fill
                   className="object-cover"
