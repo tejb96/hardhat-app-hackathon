@@ -5,6 +5,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { UploadCloud, FileText, ShieldCheck } from "lucide-react";
 import { motion } from "framer-motion";
+import Link from "next/link";
+
 
 export default function HomeMotion() {
   return (
@@ -57,9 +59,13 @@ export default function HomeMotion() {
             </Card>
           </div>
 
-          <Button size="lg" className="rounded-2xl">
-            Upload Image
-          </Button>
+          <div className="mt-6 ml-45"> 
+            <Link href="/upload" passHref>
+              <Button size="lg" className="rounded-2xl">
+                Upload Image
+              </Button>
+            </Link>
+          </div>
         </motion.div>
 
         {/* Right */}
