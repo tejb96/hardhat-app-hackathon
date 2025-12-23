@@ -52,7 +52,7 @@ export default function Home() {
           </div>
 
           <div className="mt-6 ml-45"> 
-            <Link href="/detection/upload" passHref>
+            <Link href="/upload" passHref>
               <Button size="lg" className="rounded-2xl">
                 Upload Image
               </Button>
