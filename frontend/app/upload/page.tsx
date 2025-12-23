@@ -2,24 +2,31 @@
 import { useState, useRef, useEffect } from "react";
 import FileUpload from '@/components/file-upload'
 import { Button } from "@/components/ui/button";
+import { useRouter } from 'next/navigation';
 
 const UploadImage = () => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [detectionResults, setDetectionResults] = useState<any>(null);
-  const [isAnalyzing, setIsAnalyzing] = useState(false);
+
   const canvasRef = useRef<HTMLCanvasElement>(null);
+
+  const router = useRouter();
+
+  const handleGenerateReport = async () => {
+    if (!detectionResults) return;
+
+  }
 
   const handleAnalyze = async () => {
     if (!selectedFile) return;
 
-    setIsAnalyzing(true);
     setDetectionResults(null);
 
     const formData = new FormData();
     formData.append("file", selectedFile);
 
     try {
-      const response = await fetch("http://localhost:8000/detect", {
+      const response = await fetch("http://localhost:8000/detection/detect", {
         method: "POST",
         body: formData,
       });
@@ -43,10 +50,10 @@ const UploadImage = () => {
     img.onload = () => {
       const canvas = canvasRef.current!;
       const ctx = canvas.getContext("2d")!;
-      
+
       canvas.width = img.width;
       canvas.height = img.height;
-      
+
       ctx.drawImage(img, 0, 0);
 
       detectionResults.detections.forEach((det: any) => {
@@ -71,7 +78,7 @@ const UploadImage = () => {
   }, [selectedFile, detectionResults]);
 
 
-    return (
+  return (
     <div className="flex flex-col items-center justify-center min-h-screen px-1">
       <h1 className="text-3xl font-bold mb-1">
         PPE Hardhat Detection
@@ -80,7 +87,7 @@ const UploadImage = () => {
       {/* Upload Section - shown only before analysis */}
       {!detectionResults && (
         <FileUpload
-          buttonText={isAnalyzing ? "Analyzing..." : "Analyze Image"}
+          buttonText={"Analyze Image"}
           onSubmit={handleAnalyze}
           selectedFile={selectedFile}
           setSelectedFile={setSelectedFile}
@@ -120,15 +127,27 @@ const UploadImage = () => {
               <p className="text-sm text-gray-600 mt-1">Average Confidence</p>
             </div>
 
-            <div className="col-span-2">
-              {/* <Button
-                className="w-full rounded-2xl"
+            <div className="col-span-2 flex justify-center mt-4 gap-4">
+              <Button
+                className="rounded-2xl"
                 size="lg"
                 onClick={handleGenerateReport}
-                disabled={isGeneratingReport}
               >
-                {isGeneratingReport ? "Generating..." : "Generate PDF Report"}
-              </Button> */}
+                Generate PDF Report
+              </Button>
+
+              <Button
+                // variant="outline"
+                size="lg"
+                className="rounded-2xl"
+                onClick={() => {
+                  setDetectionResults(null);
+                  setSelectedFile(null);
+                  router.push("/upload");
+                }}
+              >
+                Analyze New Image
+              </Button>
             </div>
           </div>
 
@@ -143,30 +162,17 @@ const UploadImage = () => {
                 ref={canvasRef}
                 className="max-w-full h-auto rounded-xl border border-gray-300"
               />
-              <div className="mt-4 flex gap-6 text-sm font-medium text-gray-700">
+              {/* Legend Column */}
+              <div className="flex flex-col gap-3 text-sm font-medium text-gray-700 pt-4">
                 <div className="flex items-center gap-2">
                   <span className="w-4 h-4 rounded-full bg-red-500 border border-red-700"></span>
                   <span>No Hard Hat</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <span className="w-4 h-4 rounded-full bg-green-500 border border-green-700"></span>
-                  <span>Helmet</span>
+                  <span>Hard Hat</span>
                 </div>
               </div>
-            </div>
-
-            <div className="mt-6 text-center">
-              <Button
-                variant="outline"
-                size="lg"
-                className="rounded-2xl"
-                onClick={() => {
-                  setDetectionResults(null);
-                  setSelectedFile(null);
-                }}
-              >
-                Analyze New Image
-              </Button>
             </div>
           </div>
         </div>
