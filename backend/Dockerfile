@@ -1,14 +1,16 @@
 FROM python:3.12-slim
 
-# Install uv.
-COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
+# Install uv for dependency management
+COPY --from=ghcr.io/astral-sh/uv:latest /uv /bin/
 
-# Copy the application into the container.
-COPY . /app
-
-# Install the application dependencies.
+# Set working directory
 WORKDIR /app
-RUN uv sync --frozen --no-cache
 
-# Run the application.
-CMD ["/app/.venv/bin/fastapi", "run", "app/main.py", "--port", "80", "--host", "0.0.0.0"]
+# Copy project files
+COPY . .
+
+# Install dependencies using uv
+RUN uv sync --locked
+
+# Run app
+CMD ["/bin/sh", "-c", "/app/.venv/bin/uvicorn app.main:app --host 0.0.0.0 --port ${PORT:-8000} --log-level debug"]

@@ -6,13 +6,13 @@ services:
       - "3000:3000"
     volumes:
       - "./frontend:/app"
-      - "/app/node_modules"
-      - "/app/.next"
+      # - "/app/node_modules"
+      # - "/app/.next"
 
   backend:
-    build: ./backend
+    build: ./backend/Dockerfile.dev
     container_name: backend
     ports:
       - "8000:8000"
     volumes:
-      -"./backend:/app"
+      - "./backend:/app"
