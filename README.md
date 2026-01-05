@@ -1,6 +1,6 @@
-# Hardhat App Hackathon
+# Hardhat App
 
-A real-time hardhat detection application built for the SkillsProject × Raise Hackathon. This project uses a **YOLOv8 object detection model** to identify whether construction workers are wearing safety helmets.
+A real-time hardhat detection application that uses a **YOLOv8 object detection model** to identify whether construction workers are wearing safety helmets.
 
 Model used: [YOLOv8m Hard Hat Detection](https://huggingface.co/keremberke/yolov8m-hard-hat-detection) via Ultralytics.
 
@@ -8,7 +8,7 @@ Model used: [YOLOv8m Hard Hat Detection](https://huggingface.co/keremberke/yolov
 
 - [Features](#features)  
 - [Tech Stack](#tech-stack)  
-- [Demo](#demo)  
+- [Results](#results)  
 - [Installation](#installation)  
   - [Backend (FastAPI)](#backend-fastapi)  
   - [Frontend (Next.js)](#frontend-nextjs)  
@@ -35,6 +35,16 @@ Model used: [YOLOv8m Hard Hat Detection](https://huggingface.co/keremberke/yolov
 - **Backend:** FastAPI, Python 3.10+  
 - **ML Model:** YOLOv8 (Ultralytics)  
 - **Deployment:** Hugging Face Hub (for model), Docker-ready  
+
+---
+
+## Results
+
+Sample outputs from the hardhat detection application are available in the `Results/` directory:
+
+- **initial-image.jpeg** - Original test image
+- **annotated-image.png** - Annotated output with detected helmets highlighted
+- **ppe_safety_report.pdf** - Detailed analysis report
 
 ---
 

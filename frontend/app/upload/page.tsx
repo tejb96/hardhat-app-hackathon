@@ -15,6 +15,31 @@ const UploadImage = () => {
   const handleGenerateReport = async () => {
     if (!detectionResults) return;
 
+    const { session_id } = detectionResults;
+    
+    try {
+      const response = await fetch(`http://localhost:8000/detection/generate-report/${session_id}`, {
+        method: "POST",
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to generate report");
+      }
+
+      // Create a blob from the response and download it
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "ppe_safety_report.pdf";
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+    } catch (error) {
+      console.error("Error generating report:", error);
+      alert("There was an error generating the PDF report. Please try again.");
+    }
   }
 
   const handleAnalyze = async () => {
