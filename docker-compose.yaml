@@ -10,7 +10,9 @@ services:
       # - "/app/.next"
 
   backend:
-    build: ./backend/Dockerfile.dev
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.dev
     container_name: backend
     ports:
       - "8000:8000"
