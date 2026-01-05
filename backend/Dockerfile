@@ -10,7 +10,7 @@ WORKDIR /app
 COPY . .
 
 # Install dependencies using uv
-RUN uv sync --locked
+RUN UV_HTTP_TIMEOUT=1500 uv sync --locked
 
 # Run app
 CMD ["/bin/sh", "-c", "/app/.venv/bin/uvicorn app.main:app --host 0.0.0.0 --port ${PORT:-8000} --log-level debug"]

@@ -42,9 +42,9 @@ Model used: [YOLOv8m Hard Hat Detection](https://huggingface.co/keremberke/yolov
 
 Sample outputs from the hardhat detection application are available in the `Results/` directory:
 
-- **initial-image.jpeg** - Original test image
-- **annotated-image.png** - Annotated output with detected helmets highlighted
-- **ppe_safety_report.pdf** - Detailed analysis report
+- **[initial-image.jpeg](Results/initial-image.jpeg)** - Original test image
+- **[annotated-image.png](Results/annotated-image.png)** - Annotated output with detected helmets highlighted on the frontend dashboard
+- **[ppe_safety_report.pdf](Results/ppe_safety_report.pdf)** - Detailed analysis report
 
 ---
 
